@@ -1,0 +1,1 @@
+void error_handle(std::string msg);
