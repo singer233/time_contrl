@@ -2,12 +2,13 @@
 #include <syslog.h>
 #include <unistd.h>
 #include <cstdlib>
-#include <pthread.h>
+#include <thread>
+#include <mutex>
 
 
 #include "deamonize.hh"
 #include "server_socket.hh"
-
+void callback_change_setting(std::string);
 int main(int argc, char const *argv[])
 {
     const char socket_path[] ="/tmp/socket";
@@ -21,9 +22,19 @@ int main(int argc, char const *argv[])
 #else
     std::cout << "run on debug mode"<<std::endl;
 #endif
+    std::mutex wiksmz;
 // initlizing socket for communicate with client
-    int socket_fd = init_server_socket(socket_path,sizeof(socket_path));
+    ssl_socket sk = ssl_socket(socket_path,sizeof(socket_path));
+    sk.set_listen(1);
     std::cout << "hello deamon";
-    remove("/tmp/socket");
+    sk.Server_establish_connection(callback_change_setting,wiksmz);
+
+//clean and exit()
+
     return 0;
 }
+void callback_change_setting(std::string)
+{
+
+}
+
